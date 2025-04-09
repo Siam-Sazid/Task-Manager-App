@@ -21,6 +21,7 @@ class TaskItemWidget extends StatefulWidget {
 class _TaskItemWidgetState extends State<TaskItemWidget> {
   bool _deleteTaskInProgress = false;
   bool _isDeleted = false; //  Flag to hide widget after delete
+  bool _updateTaskInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +56,23 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
                 ),
                 Row(
                   children: [
-                    IconButton(onPressed: (){
-                      _showEditStatusDialog();
+                    Visibility(
+                      visible: _updateTaskInProgress == false,
+                      replacement: CustomCircularProgressIndicator(),
+                      child: IconButton(onPressed: (){
+                        _showEditStatusDialog();
 
-                    }, icon: Icon(Icons.edit)),
+                      }, icon: const Icon(Icons.edit)),
+                    ),
                     Visibility(
                       visible: _deleteTaskInProgress == false,
-                      replacement: CustomCircularProgressIndicator(),
+                      replacement:  CustomCircularProgressIndicator(),
                       child: IconButton(onPressed: (){
                         _deleteTask();
 
 
 
-                      }, icon: Icon(Icons.delete)),
+                      }, icon: const Icon(Icons.delete)),
                     ),
                   ],
                 )
@@ -174,7 +179,7 @@ Future <void> _deleteTask () async {
       ),
       onPressed: () async {
         Navigator.pop(context); // Close dialog
-
+          _onUpdateStatus(status);
         // // Optional: Make API call to update status here
         // // Example (replace this with your actual API logic):
         // // await NetworkCaller.postRequest(
@@ -182,10 +187,27 @@ Future <void> _deleteTask () async {
         // // );
         //
         // setState(() {
-        //   widget.taskModel.status = status;
+         //  widget.taskModel.status = status;
         // });
       },
       child: Text(status, style: const TextStyle(color: Colors.white)),
+      
     );
   }
+  
+  Future<void> _onUpdateStatus(String status) async{
+    
+    final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.updateStatusTask(widget.taskModel.sId!, status));
+    if(response.isSuccess){
+      _updateTaskInProgress = true;
+     widget.taskModel.status = status;
+      setState(() {
+
+      });
+
+    }else{
+      showSnackBarMessage(context, response.errorMessage);
+    }
+  } 
+  
 }
