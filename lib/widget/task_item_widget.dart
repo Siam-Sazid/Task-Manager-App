@@ -22,10 +22,11 @@ class _TaskItemWidgetState extends State<TaskItemWidget> {
   bool _deleteTaskInProgress = false;
   bool _isDeleted = false; //  Flag to hide widget after delete
   bool _updateTaskInProgress = false;
+  bool _isUpdated = false;
 
   @override
   Widget build(BuildContext context) {
-    if (_isDeleted) return const SizedBox.shrink(); //  Don't render if deleted
+    if (_isDeleted || _isUpdated) return const SizedBox.shrink(); //  Don't render if deleted
     return Card(
       color: Colors.white,
       elevation: 0,
@@ -200,11 +201,12 @@ Future <void> _deleteTask () async {
     final NetworkResponse response = await NetworkCaller.getRequest(url: Urls.updateStatusTask(widget.taskModel.sId!, status));
     if(response.isSuccess){
       _updateTaskInProgress = true;
+      _isUpdated = true;
      widget.taskModel.status = status;
       setState(() {
 
       });
-
+      showSnackBarMessage(context, 'Task is updated to $status status');
     }else{
       showSnackBarMessage(context, response.errorMessage);
     }

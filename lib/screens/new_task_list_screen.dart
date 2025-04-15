@@ -56,7 +56,7 @@ class _NewTaskListScreenState extends State<NewTaskListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: (){
-            Navigator.pushNamed(context, AddNewTaskScreen.name);
+            Navigator.pushNamed(context, AddNewTaskScreen.name).then((_) => _getNewTaskList()).then((_) => _getTaskCountByStatus());
           },
          child: Icon(Icons.add),
 
