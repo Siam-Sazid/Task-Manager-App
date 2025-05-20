@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:task_manager/controllers/auth_controller.dart';
 import 'package:task_manager/screens/sign_in_screen.dart';
@@ -19,7 +21,15 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppColor.themeColor,
       title:  Row(
         children: [
-          CircleAvatar(),
+          CircleAvatar(
+            radius:  16,
+            backgroundImage: MemoryImage(
+                 base64Decode(AuthController.userModel?.photo ?? '')
+
+            ),
+            onBackgroundImageError: (_, __) => Icon(Icons.person),
+
+          ),
           const SizedBox(width: 16,),
           Expanded(
             child: GestureDetector(
